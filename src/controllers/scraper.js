@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 
 const getProductData = async (url, id) => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto(url);
   const data = await page.evaluate(() => {
