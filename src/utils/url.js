@@ -12,4 +12,9 @@ const getIdFromURL = (url) => {
   return id;
 };
 
-module.exports = { getURL, getIdFromURL };
+const generateUrlFromId = (id) => {
+  const url = `${AMAZON_BASE_URL}/dp/${id}`;
+  return url;
+};
+
+module.exports = { getURL, getIdFromURL, generateUrlFromId };
