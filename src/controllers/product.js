@@ -1,22 +1,26 @@
 const { Product, UserProducts, HistoryPrices } = require("../../models");
-const { getURL, getIdFromURL } = require("../utils/url");
+const { formatURL, getIdFromURL } = require("../utils/url");
 const getProductData = require("./scraper");
 
 const addProduct = async (req, res, next) => {
   let { url } = req.body;
-  url = getURL(url);
+  url = formatURL(url);
   const productID = getIdFromURL(url);
-
-  let product = await Product.findOne({ where: { productID } });
-  //product has not been added
-  if (!product) {
-    product = await getProductData(url, productID);
-    await Product.create({ productID, title: product.title });
-    await HistoryPrices.create({ productID, price: product.price });
+  if (!productID) return res.status(400).json({ msg: "bad request" });
+  try {
+    let product = await Product.findOne({ where: { productID } });
+    //product has not been added
+    if (!product) {
+      product = await getProductData(url, productID);
+      await Product.create({ productID, title: product.title });
+      await HistoryPrices.create({ productID, price: product.price });
+    }
+    // add product to user's list
+    await addProductToList(productID, req.email);
+    res.json({ product });
+  } catch (error) {
+    res.status(400).json({ error });
   }
-  // add product to user's list
-  await addProductToList(productID, req.email);
-  res.json({ product });
 };
 
 const addProductToList = async (productID, email) => {
