@@ -5,8 +5,8 @@ const getProductData = async (url, id) => {
   const page = await browser.newPage();
   await page.goto(url);
   const data = await page.evaluate(() => {
-    const price = parseFloat(document.querySelector(".a-offscreen").textContent.replace("$", ""));
-    const title = document.querySelector("#productTitle").textContent.trim();
+    const price = parseFloat(document.querySelector(".a-offscreen")?.textContent.replace("$", ""));
+    const title = document.querySelector("#productTitle")?.textContent.trim();
 
     const product = { price, title };
     return product;
