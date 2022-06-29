@@ -7,4 +7,6 @@ app.use(cors());
 app.use(express.json());
 app.use(authRouter, productRouter);
 
+require("./controllers/settingJob");
+
 module.exports = app;
