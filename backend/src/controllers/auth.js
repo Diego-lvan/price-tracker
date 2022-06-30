@@ -3,13 +3,17 @@ const { encryptPwd } = require("../utils/encryptPwd");
 const jwt = require("jsonwebtoken");
 require("dotenv/config");
 
-const createUser = async (req, res) => {
-  const { email, pwd, name } = req.body;
-  const userExists = await User.findOne({ where: { email } });
-  if (userExists) return res.json({ msg: "user already exists" });
-  const hashedPwd = await encryptPwd(pwd);
-  const user = await User.create({ email, pwd: hashedPwd, name });
-  res.json({ user });
+const createUser = async (req, res, next) => {
+  try {
+    const { email, pwd, name } = req.body;
+    const userExists = await User.findOne({ where: { email } });
+    if (userExists) return res.json({ msg: "user already exists" });
+    const hashedPwd = await encryptPwd(pwd);
+    await User.create({ email, pwd: hashedPwd, name });
+    next();
+  } catch (error) {
+    res.sendStatus(400);
+  }
 };
 
 const loginUser = async (req, res) => {
