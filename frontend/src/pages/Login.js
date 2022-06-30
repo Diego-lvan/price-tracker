@@ -1,7 +1,7 @@
 import React from "react";
 import Axios from "axios";
-import AuthLogin from "./AuthForm";
-import { URL } from "../../config";
+import AuthLogin from "../components/Auth/AuthForm";
+import { URL } from "../config";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
