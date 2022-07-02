@@ -16,7 +16,7 @@ const NavBar = () => {
         <Container>
           <Navbar.Brand href="/addProduct">Add product</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link href="/graphs">Graphs</Nav.Link>
+            <Nav.Link href="/chart">Charts</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
