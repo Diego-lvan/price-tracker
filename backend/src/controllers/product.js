@@ -1,5 +1,7 @@
 const { Product, UserProducts, HistoryPrices } = require("../../models");
 const { formatURL, getIdFromURL } = require("../utils/url");
+const { Op } = require("sequelize");
+
 const getProductData = require("./scraper");
 
 const addProduct = async (req, res, next) => {
@@ -30,4 +32,15 @@ const addProductToList = async (productID, email) => {
   }
 };
 
-module.exports = { addProduct };
+const getProductHistoy = async (req, res) => {
+  const { productID } = req.params;
+  try {
+    const history = await HistoryPrices.findAll({ where: { productID }, attributes: ["date", "price"] });
+    console.log(history);
+    res.json({ history });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+module.exports = { addProduct, getProductHistoy };
