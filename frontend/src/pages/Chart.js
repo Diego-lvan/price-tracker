@@ -4,10 +4,11 @@ import ChartLine from "../components/Chart/Chart";
 
 import axios from "axios";
 import { URL } from "../config";
-
+import { useNavigate } from "react-router-dom";
 const Chart = () => {
   const [productID, setProductID] = useState("");
   const [productHistory, setProductHistory] = useState(null);
+  const navigate = useNavigate();
 
   const fetchHistoryPrices = async () => {
     if (!productID) return;
@@ -16,7 +17,9 @@ const Chart = () => {
       const historyPrices = res.data.history;
       setProductHistory(historyPrices);
     } catch (error) {
-      console.log(error);
+      if (error.response.status === 401) {
+        navigate("/", { replace: true });
+      }
     }
   };
 
@@ -27,6 +30,11 @@ const Chart = () => {
     <>
       <ChartForm productID={productID} setProductID={setProductID} />
       {productHistory && <ChartLine productHistory={productHistory} />}
+      {productID && (
+        <a target="_blank" href={`https://www.amazon.com/dp/${productID}`}>
+          https://www.amazon.com/dp/{productID}
+        </a>
+      )}
     </>
   );
 };
