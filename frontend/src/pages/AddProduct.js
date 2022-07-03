@@ -16,14 +16,16 @@ const AddProduct = () => {
     e.preventDefault();
     try {
       const token = window.localStorage.getItem("token");
-      const res = await axios.post(`${URL}/api/product`, { url: productURL }, { headers: { Authorization: token } });
+      setSuccessMessage("Loading...");
+      await axios.post(`${URL}/api/product`, { url: productURL }, { headers: { Authorization: token } });
       setErrorMessage("");
       setSuccessMessage("Product added succesfully");
-      setInterval(() => {
+      setTimeout(() => {
+        console.log("running");
         setSuccessMessage("");
       }, 3000);
     } catch (error) {
-      if (error.response.status === 401) {
+      if (error?.response?.status === 401) {
         navigate("/", { replace: true });
       }
       setSuccessMessage("");
