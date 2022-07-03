@@ -25,7 +25,7 @@ const AddProduct = () => {
         setSuccessMessage("");
       }, 3000);
     } catch (error) {
-      if (error?.response?.status === 401) {
+      if (error.response.status === 401) {
         navigate("/", { replace: true });
       }
       setSuccessMessage("");
