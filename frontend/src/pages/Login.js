@@ -13,7 +13,7 @@ const Login = () => {
       const res = await Axios.post(`${URL}/api/auth/login`, { email, pwd });
       const token = res.data.accessToken;
       window.localStorage.setItem("token", token);
-      navigate("/home", { replace: true });
+      navigate("/addProduct", { replace: true });
       console.log(token);
     } catch (error) {
       console.log(error);
