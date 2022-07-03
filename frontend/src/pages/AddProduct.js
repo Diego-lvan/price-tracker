@@ -3,10 +3,15 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { URL } from "../config";
+import { useNavigate } from "react-router-dom";
+
 const AddProduct = () => {
   const [productURL, setProductURL] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  const navigate = useNavigate();
+
   const addProduct = async (e) => {
     e.preventDefault();
     try {
@@ -18,6 +23,9 @@ const AddProduct = () => {
         setSuccessMessage("");
       }, 3000);
     } catch (error) {
+      if (error.response.status === 401) {
+        navigate("/", { replace: true });
+      }
       setSuccessMessage("");
       setErrorMessage("Wrong URL format");
       setInterval(() => {
