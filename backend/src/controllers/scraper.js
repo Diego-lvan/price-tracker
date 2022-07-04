@@ -4,6 +4,7 @@ const getProductData = async (url, id) => {
   try {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
+    page.setDefaultNavigationTimeout(0);
     await page.goto(url);
     const data = await page.evaluate(() => {
       const price = parseFloat(document.querySelector(".a-offscreen")?.textContent.replace("$", ""));
