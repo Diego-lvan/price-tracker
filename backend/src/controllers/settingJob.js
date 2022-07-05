@@ -1,62 +1,43 @@
 const schedule = require("node-schedule");
-const { Product, HistoryPrices, UserProducts } = require("../../models");
-const getUpdatedProduct = require("./scraper");
-const { generateUrlFromId } = require("../utils/url");
+const { Product, UserProducts } = require("../../models");
 const transport = require("../utils/transportMail");
+const getPercentage = require("../utils/getPercentage");
 require("dotenv/config");
 
+// every two hours gets the total products and creates
+// a timeout for every product between the next two hours
 const setJob = async () => {
-  const cronExpression = "0 */2 * * *";
-  schedule.scheduleJob(cronExpression, async () => {
-    const updatedProducts = await fetchUpdatedProducts();
-    await updateProductPrices(updatedProducts);
-    await sendEmailToUsers(updatedProducts);
+  const twoHoursExp = "0 */2 * * *";
+  schedule.scheduleJob(twoHoursExp, async () => {
+    const time = 1000 * 60 * 60 * 2; // two hours in milliseconds
+    const amountProducts = await Product.count();
+    const milliseconds = Math.round(time / amountProducts);
+    const products = await Product.findAll();
+    for (let i = 0; i < amountProducts; i++) {
+      setTimeout(async () => {
+        const updatedProduct = await fetchNewPrice(products[i].dataValues.productID);
+        if (!updatedProduct) return;
+        await updateProductPrice(products[i].dataValues.productID, updatedProduct.price);
+        await sendEmailToUsers(updatedProduct);
+      }, milliseconds * i);
+    }
   });
 };
 
-const fetchUpdatedProducts = async () => {
-  const products = await Product.findAll({ include: HistoryPrices, order: [[HistoryPrices, "date", "desc"]] });
-  const ans = [];
-  try {
-    await Promise.allSettled(
-      await products.map(async (product) => {
-        const lastPrice = product.dataValues.HistoryPrices[0].dataValues.price;
-        const url = generateUrlFromId(product.productID);
-        const updatedProduct = await getUpdatedProduct(url, product.productID);
-        if (updatedProduct.price != lastPrice) {
-          ans.push(updatedProduct);
-        }
-        return product;
-      })
-    );
-    return ans;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const updateProductPrices = async (products) => {
-  await Promise.allSettled(products.map(async ({ price, productID }) => await HistoryPrices.create({ price, productID })));
-};
-
-const sendEmailToUsers = async (updatedProducts) => {
-  updatedProducts.map(async (product) => {
-    const users = await UserProducts.findAll({ where: { productID: product.productID }, attributes: ["email"] });
-    users.map((user) => {
-      console.log(user);
-      const options = {
-        from: process.env.EMAIL_ADDRESS,
-        to: user.dataValues.email,
-        subject: `The price of this product has changed ${product.title}`,
-        text: `The new price is ${product.price}`,
-      };
-      transport.sendMail(options, (err, info) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("success");
-        }
-      });
+const sendEmailToUsers = async ({ productID, title, price, prevPrice }) => {
+  const users = await UserProducts.findAll({ where: { productID }, attributes: ["email"] });
+  users.map((user) => {
+    const percentage = getPercentage(prevPrice, price);
+    const options = {
+      from: process.env.EMAIL_ADDRESS,
+      to: user.dataValues.email,
+      subject: `The price of this product has changed ${title}`,
+      text: `The new price is ${price} which is ${Math.abs(percentage)}%  ${percentage > 0 ? "more expensive" : "cheaper"} `,
+    };
+    transport.sendMail(options, (err, info) => {
+      if (err) {
+        console.log(err);
+      }
     });
   });
 };
