@@ -1,7 +1,6 @@
 const { Product, UserProducts, HistoryPrices } = require("../../models");
-const { formatURL, getIdFromURL } = require("../utils/url");
-const { Op } = require("sequelize");
-
+const { formatURL, getIdFromURL, generateUrlFromId } = require("../utils/url");
+const getUpdatedProduct = require("./scraper");
 const getProductData = require("./scraper");
 
 const addProduct = async (req, res, next) => {
@@ -36,11 +35,33 @@ const getProductHistoy = async (req, res) => {
   const { productID } = req.params;
   try {
     const history = await HistoryPrices.findAll({ where: { productID }, attributes: ["date", "price"] });
-    console.log(history);
     res.json({ history });
   } catch (error) {
     res.status(500).json({ error });
   }
 };
 
-module.exports = { addProduct, getProductHistoy };
+const fetchNewPrice = async (productID) => {
+  const product = await Product.findAll({
+    where: { productID },
+    include: HistoryPrices,
+    order: [[HistoryPrices, "date", "desc"]],
+  });
+  try {
+    const prevPrice = product[0].dataValues.HistoryPrices[0].dataValues.price;
+    const url = generateUrlFromId(productID);
+    const updatedProduct = await getUpdatedProduct(url, productID);
+    if (updatedProduct.price != prevPrice) {
+      return { prevPrice, ...updatedProduct };
+    }
+    return null;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const updateProductPrice = async (productID, price) => {
+  await HistoryPrices.create({ price, productID });
+};
+
+module.exports = { addProduct, getProductHistoy, updateProductPrice, fetchNewPrice };
