@@ -6,8 +6,8 @@
 
 ## Intro <a name="intro"></a>
 
-With this app you can track prices of multiple products (currently only work with Amazon products). <br/>
-It also has the option of visualize the price over the time.
+With this app you can track prices of multiple products (currently only works with Amazon products). It has the option of visualize the price over time.
+You will receive an email when the price of a product you have added changes.
 
 ## Requirements <a name="requirements"></a>
 
