@@ -20,3 +20,6 @@ You will receive an email when the price of a product you have added changes.
 ### Chart
 
 ![chart example](https://github.com/Diego-lvan/price-tracker/blob/master/example/chart.jpg)
+
+### Email when a product's price changes
+![email example)(https://github.com/Diego-lvan/price-tracker/blob/master/example/email.jpg)
