@@ -1,4 +1,4 @@
-const { Product, UserProducts, HistoryPrices } = require("../../models");
+const { Product, UserProducts, HistoryPrices } = require("../models");
 const { formatURL, getIdFromURL, generateUrlFromId } = require("../utils/url");
 const getUpdatedProduct = require("./scraper");
 const getProductData = require("./scraper");

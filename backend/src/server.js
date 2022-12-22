@@ -1,5 +1,5 @@
 const app = require("./app");
-const { sequelize } = require("../models");
+const { sequelize } = require("./models");
 require("dotenv/config");
 
 app.listen(process.env.PORT, async () => {

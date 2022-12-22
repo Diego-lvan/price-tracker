@@ -1,5 +1,5 @@
 const schedule = require("node-schedule");
-const { Product, UserProducts } = require("../../models");
+const { Product, UserProducts } = require("../models");
 const transport = require("../utils/transportMail");
 const getPercentage = require("../utils/getPercentage");
 const { fetchNewPrice, updateProductPrice } = require("./product");

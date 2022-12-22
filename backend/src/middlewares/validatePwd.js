@@ -1,5 +1,5 @@
 const { comparePwd } = require("../utils/encryptPwd");
-const { User } = require("../../models");
+const { User } = require("../models");
 const validatePwd = async (req, res, next) => {
   const { email, pwd } = req.body;
   const user = await User.findOne({ where: { email } });
