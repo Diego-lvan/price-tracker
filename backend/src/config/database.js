@@ -3,8 +3,8 @@ module.exports = {
   development: {
     username: process.env.DB_USER,
     password: process.env.DB_PWD,
-    database: "price_tracker_development",
-    host: "127.0.0.1",
+    database: "app_database",
+    host: "db",
     dialect: "mysql",
   },
   test: {
