@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  express-api:
+    build:
+      context: .
+      dockerfile: dockerfile.express
+    command: nodemon --inspect=0.0.0.0:9229 /app/backend/src/server.js
+    volumes:
+      - .:/app
+    ports:
+      - 3000:3000
+      - 9229:9229
+    depends_on:
+      - db
+
+  react-app:
+    build:
+      context: .
+      dockerfile: dockerfile.react
+    command: npm start
+    volumes:
+      - .:/reactapp
+    ports:
+      - 3001:3000
+    depends_on:
+      - express-api
+
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: app_database
+    ports:
+      - 3307:3306
+    volumes:
+      - db_data:/var/lib/mysql
+volumes:
+  db_data:
