@@ -2,7 +2,10 @@ const puppeteer = require("puppeteer");
 
 const getProductData = async (url, id) => {
   try {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({
+      executablePath: "/usr/bin/google-chrome",
+      args: ["--no-sandbox"],
+    });
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
     await page.goto(url);
