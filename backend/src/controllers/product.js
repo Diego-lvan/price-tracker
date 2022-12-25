@@ -13,7 +13,7 @@ const addProduct = async (req, res, next) => {
     //product has not been added
     if (!product) {
       product = await getProductData(url, productID);
-      if (!product?.title || product?.price) return res.status(400).json({ msg: "Something went wrong" });
+      if (!product?.title || !product?.price) return res.status(400).json({ msg: "Something went wrong" });
       await Product.create({ productID, title: product.title });
       await HistoryPrices.create({ productID, price: product.price });
     }
@@ -21,6 +21,7 @@ const addProduct = async (req, res, next) => {
     await addProductToList(productID, req.email);
     res.json({ product });
   } catch (error) {
+    console.log({ error });
     res.status(400).json({ error });
   }
 };
