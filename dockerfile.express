@@ -20,9 +20,6 @@ WORKDIR /app/backend
 # Copy the package.json and package-lock.json
 COPY ./backend/package*.json /app/backend
 
-# Install the dependencies
-RUN npm i
-
 # Copy the rest of the source code
 COPY ./backend  /app
 
