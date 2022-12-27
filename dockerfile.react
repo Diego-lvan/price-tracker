@@ -4,11 +4,4 @@ FROM node:18
 RUN mkdir  -p /reactapp/frontend
 WORKDIR /reactapp/frontend
 
-COPY ./frontend/package*.json /reactapp/frontend
-
-
-# Copy the rest of the source code
-COPY ./frontend /reactapp
-
-
 

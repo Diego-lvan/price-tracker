@@ -16,11 +16,3 @@ RUN npm i -g puppeteer nodemon
 # Set the working directory
 RUN mkdir -p /app/backend
 WORKDIR /app/backend
-
-# Copy the package.json and package-lock.json
-COPY ./backend/package*.json /app/backend
-
-# Copy the rest of the source code
-COPY ./backend  /app
-
-
