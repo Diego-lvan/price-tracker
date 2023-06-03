@@ -2,6 +2,7 @@ const { Product, UserProducts, HistoryPrices } = require("../models");
 const { formatURL, getIdFromURL, generateUrlFromId } = require("../utils/url");
 const getUpdatedProduct = require("./scraper");
 const getProductData = require("./scraper");
+const { AmazonHandler } = require("./scraper/domains");
 
 const addProduct = async (req, res, next) => {
   let { url } = req.body;
@@ -12,7 +13,9 @@ const addProduct = async (req, res, next) => {
     let product = await Product.findOne({ where: { productID } });
     //product has not been added
     if (!product) {
-      product = await getProductData(url, productID);
+      const amazonHandler = new AmazonHandler(url);
+      await amazonHandler.getInfo();
+      product = amazonHandler.getProductInfo();
       if (!product?.title || !product?.price) return res.status(400).json({ msg: "Something went wrong" });
       await Product.create({ productID, title: product.title });
       await HistoryPrices.create({ productID, price: product.price });
