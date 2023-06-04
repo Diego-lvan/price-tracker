@@ -1,7 +1,5 @@
 const { Product, UserProducts, HistoryPrices } = require("../models");
 const { formatURL, getIdFromURL, generateUrlFromId } = require("../utils/url");
-const getUpdatedProduct = require("./scraper");
-const getProductData = require("./scraper");
 const { AmazonHandler } = require("./scraper/domains");
 
 const addProduct = async (req, res, next) => {
@@ -55,7 +53,9 @@ const fetchNewPrice = async (productID) => {
   try {
     const prevPrice = product[0].dataValues.HistoryPrices[0].dataValues.price;
     const url = generateUrlFromId(productID);
-    const updatedProduct = await getUpdatedProduct(url, productID);
+    const amazonHandler = new AmazonHandler(url);
+    await amazonHandler.getInfo();
+    const updatedProduct = amazonHandler.getProductInfo();
     if (updatedProduct.price != prevPrice) {
       return { prevPrice, ...updatedProduct };
     }
