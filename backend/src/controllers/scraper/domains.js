@@ -70,4 +70,16 @@ class AmazonHandler extends WebsiteHandler {
   }
 }
 
-module.exports = { AmazonHandler };
+const getWebsiteName = (url) => {
+  let shortedUrl = url.replace(/^(https:\/\/)/, "");
+  shortedUrl = shortedUrl.replace(/^(http:\/\/)/, "");
+  shortedUrl = shortedUrl.replace(/^(www.)/, "");
+
+  // remove dns such as .com
+  const webseiteName = shortedUrl.split(".")[0];
+  return webseiteName;
+};
+
+const SUPPORTED_WEBSITED = { amazon: AmazonHandler };
+
+module.exports = { SUPPORTED_WEBSITED, getWebsiteName, AmazonHandler };
